@@ -37,7 +37,7 @@ class Message(object):
         self.send_message(self.template, words)
 
     def ban_handler(self, **kwargs):
-        self.send_message(self.template)
+        self.send_message(self.template, ())
         editor_token = kwargs.get('editor_token', None)
         group_id = kwargs.get('group_id', None)
         ban_reason = kwargs.get('ban_reason', None)

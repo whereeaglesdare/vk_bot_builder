@@ -2,12 +2,12 @@ import json
 import random
 
 import redis
-from config import Config
-from messages import Message
+from bot.utils import Config
+from bot.messages import Message
 
 
 class MessageHandler(object):
-    def __init__(self, user_id, config, response):
+    def __init__(self, config, response):
         self.user_id = response['object']['user_id'] if  response['object'].get('user_id', None) \
             is not None else  response['object']['from_id']
         self._step = None
@@ -49,8 +49,6 @@ class MessageHandler(object):
         Config.get_handler_requirements(next_message, self.config)
         getattr(_message_instance, next_message['handler'])(**Config.get_handler_requirements(next_message, self.config))
         self.set_step(next_message['key'])
-        return 'ok'
-
 
 
 if __name__ == "__main__":
@@ -58,5 +56,5 @@ if __name__ == "__main__":
         data = json.load(f)
         #response = {"type":"wall_repost","object":{"id":67,"from_id":366467480,"owner_id":324993092,"date":1527151487,"post_type":"post","text":"","copy_history":[{"id":194,"owner_id":-162833914,"from_id":-162833914,"date":1527149366,"post_type":"post","text":"эту запись должны репостить","post_source":{"type":"vk"}}],"comments":{"count":0}},"group_id":162833914}
         response = {"type":"message_new","object":{"id":2945,"date":1527159975,"out":0,"user_id":324993092,"read_state":0,"title":"","body":"as"},"group_id":162833914}
-        m = MessageHandler(user_id=366467480, config=data, response=response)
+        m = MessageHandler(config=data, response=response)
         m.make_response()
