@@ -13,13 +13,13 @@ class Config(object):
         for message in config['messages']:
             if message['key'] == step:
                 for message_type in message['types']:
+                    print(message_type)
                     if not 'value' in message_type and \
                         message_type['type'] == user_response['type']:
                         return True
                     elif 'value' in message_type and \
                         message_type['type'] == user_response['type']:
                         """ TODO: rewrite for other types of messages """
-                        print('here')
                         if user_response['object']['copy_history'][0]['id'] == \
                             message_type['value']:
                             return True
@@ -32,5 +32,20 @@ class Config(object):
             if message['key'] == step:
                 return message
                 
+    @staticmethod
+    def get_handler_requirements(message:dict, config:dict):
+        """ Get 'requires' key from message """
+        requires_list = message.get('requires', None)
+        if requires_list is None:
+            return {}
+        else:
+            return { key:config[key] for key in requires_list }
+    
+    @staticmethod
+    def check_keyword(message: dict, user_response:str):
+        for keyword in message['accept_keyword']:
+                if user_response['object']['body'].lower() == keyword['keyword'].lower():
+                    return keyword['redirect']
+
 
 
