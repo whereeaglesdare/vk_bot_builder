@@ -1,4 +1,3 @@
-# from bot import app
 import datetime
 import vk_api
 
@@ -43,6 +42,6 @@ class Message(object):
         ban_reason = kwargs.get('ban_reason', None)
         user_session =  vk_api.VkApi(token=editor_token).get_api()
         ts = int(datetime.datetime.now().timestamp()) + 24 * 3600
-        user_session.groups.ban(group_id=group_id, owner_id=self.user_id, 
-                            reason=4, comment=ban_reason, end_date=ts)
+        user_session.groups.ban(group_id=group_id, owner_id=self.user_id,
+                                reason=4, comment=ban_reason, end_date=ts)
 
