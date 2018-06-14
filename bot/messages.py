@@ -1,6 +1,7 @@
 import datetime
-import vk_api
 
+import vk_api
+import requests
 
 class Message(object):
     """ Creates Dynamically changed values in messages and send
@@ -8,15 +9,19 @@ class Message(object):
         token (str): community access token to make requests
         template (str): static text in message
     """
-    def __init__(self, token:str, template:str, user_id:int, redis_connection):
+    def __init__(self, token:str, template:str, user_id:int, 
+                 redis_connection, user_response:dict, handler:str):
         self.vk = vk_api.VkApi(token=token).get_api()
         self.template = template
         self.redis_connection = redis_connection
         self.user_id = user_id
+        self.user_response = user_response
+        self.handler = getattr(handler, handler)
 
     def send_message(self, template, words):
         self.vk.messages.send(user_id=self.user_id, message=template % words)
-
+        return template % words
+        
     def user_first_name_and_random_link(self, **kwargs):
         random_id = "http://vk.com/id" + str(self.redis_connection.randomkey().decode())
         name = self.vk.users.get(user_ids=self.user_id, lang='ru_RU')[0]['first_name']
@@ -44,4 +49,12 @@ class Message(object):
         ts = int(datetime.datetime.now().timestamp()) + 24 * 3600
         user_session.groups.ban(group_id=group_id, owner_id=self.user_id,
                                 reason=4, comment=ban_reason, end_date=ts)
+    
+    def redirect_handler(self, **kwargs):
+        r = requests.post(url=kwargs.get('redirect_url'), json=self.user_response)
 
+    def unpack(self, args):
+        if self.handler(args):
+            return True
+        else:
+            return False
