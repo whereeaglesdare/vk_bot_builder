@@ -55,11 +55,13 @@ class Manager(object):
         if step is None:
             step = self.step
         message = self.get_message_instance(step)
+        user_text_body = self.user_response['object']['body'].lower()
         for keyword in message['accept_keyword']:    
-            if self.user_response['object']['body'].lower() == keyword['keyword'].lower():
-                return keyword['redirect']
-            if 'type' in keyword and Validator(keyword['type'], message):
+            if 'type' in keyword:
+                if Validator(message=user_text_body, validator=keyword['type']).validate():
+                    return keyword['redirect']
+                else:
+                    continue
+            elif user_text_body == keyword['keyword'].lower():
                 return keyword['redirect']
         return message['error_redirect']
-
-    

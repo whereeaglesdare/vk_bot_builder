@@ -17,10 +17,8 @@ def message_dispatcher():
     if 'secret' not in data or data['secret'] != app.config['microservice_config']['secret']:
         app.logger.critical('Request without secret key')
         return 'ok'
-    text_response = MessageHandler(config=app.config['microservice_config'], 
+    MessageHandler(config=app.config['microservice_config'], 
                                    response=data).make_response()
-    if app.config['TEST']:
-        return text_response
     return 'ok'
 
 @app.route('/reconfigure', methods=['POST'])
