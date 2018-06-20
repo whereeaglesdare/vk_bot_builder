@@ -39,8 +39,9 @@ class MessageHandler(object):
         message = Message(token=self.get_token(), user_response=self.user_response, 
                           template=next_message['message'],
                           redis_connection=self.redis_connection, user_id=self.user_id, 
-                          handler=manager.get_message_instance()['handler'],
+                          handler=next_message['handler'],
                           keyboard=next_message['keyboard'])
         message.unpack(manager.get_handler_requirements(next_message))
         self.set_step(redirect)
+
 

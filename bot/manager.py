@@ -54,8 +54,12 @@ class Manager(object):
     def get_redirect(self, step=None):
         if step is None:
             step = self.step
+        if 'payload' in self.user_response['object']:
+            if 'command' in self.user_response['object']['payload']:
+                return 'start'
+            return self.user_response['object']['payload']['button']
         message = self.get_message_instance(step)
-        user_text_body = self.user_response['object']['body'].lower()
+        user_text_body = self.user_response['object']['text'].lower()
         for keyword in message['accept_keyword']:    
             if 'type' in keyword:
                 if Validator(message=user_text_body, validator=keyword['type']).validate():
